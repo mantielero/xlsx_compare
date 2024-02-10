@@ -1,16 +1,10 @@
+# nim c -r xlsx_compare.nim -o ../examples/files/data.xlsx -m ../examples/files/data2.xlsx
 import xl
+import cligen
 import std/[strutils, tables, sequtils, strformat]
 import experimental/diff
 import system
 
-
-# Function to output a cell.
-# proc output(cell: XlCell) =
-#   var value = cell.value
-#   if value == "": value = "EMPTY"
-#   if value.len >= 9: value = value[0..<9] & "..."
-#   if not cell.isNumber: value = '"' & value & '"'
-#   stdout.write(alignLeft(value, 15))
 
 proc getColumnsAsText(sheet:XlSheet):seq[string] =
   # convert a column to text
@@ -116,10 +110,7 @@ proc compare(wbOriginal,wbNew: string) =
   var wb1 = xl.load(wbOriginal)
   var wb2 = xl.load(wbNew)
   for name in wb1.sheetNames:
-    echo "Worksheet: ", name
-    #var rng = wb1.sheet(name).range
-    #var nRows = rng.rowCount
-    #var nCols = rng.colCount
+    echo "\n\nWorksheet: ", name
 
     # Get columns
     var sheet1 = wb1.sheet(name)
@@ -152,18 +143,26 @@ proc compare(wbOriginal,wbNew: string) =
 
     # Show differences
     for (i,j,items) in mapping:
-      #echo "\n\nOriginal column: ", i, "    New column: ", j
-      var colu1 = getColumnAsText(wb1.sheet("Sheet1"), i)
-      var colu2 = getColumnAsText(wb2.sheet("Sheet1"), j)
+      var colu1 = getColumnAsText(sheet1, i)
+      var colu2 = getColumnAsText(sheet2, j)
       var colName1 = (row:0,col:i).name[0..^2]
       var colName2 = (row:0,col:j).name[0..^2]      
       echo &"{colName1:^6}|{spaces(20)}|{colName1:^6}" # {repeat("", 25)}
       echo repeat("-",6),"|",repeat("=",20),"|",repeat("-",6)
       #echo ($i).c
       echo compareColumns(colu1,colu2)
-      break
+      #break
 
+
+proc xlsx_compare(original,modified:string) =
+  ## ./xlsx_compare -o ../examples/files/data.xlsx -m ../examples/files/data2.xlsx 
+  echo "Comparing:"
+  echo "  - original file: ", original
+  echo "  - modified file: ", modified
+  compare(original, modified)
 
 when isMainModule:
-  compare("files/data.xlsx", "files/data2.xlsx")
+  import cligen
+  dispatch xlsx_compare
+  
 
