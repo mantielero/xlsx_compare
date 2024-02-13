@@ -1,11 +1,12 @@
 name: Release Drafter
 
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
-push:
-  # branches:
-  #   - master
-  tags:
-    - "v*.*.*"
+on:
+  push:
+    # branches:
+    #   - master
+    tags:
+      - "v*.*.*"
 
 jobs:
     tests:
