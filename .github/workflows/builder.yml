@@ -21,6 +21,8 @@ jobs:
           nim-version: ${{ matrix.nimversion }}
           repo-token: ${{ secrets.GITHUB_TOKEN }} 
 
-      - run: echo "Build tool"
-      - run: nimble install
-      - run: nim c -d:release src/xlsx_compare
+
+      - name: Install the xlsx_compare package
+        run: nimble install -y
+      - name: Compare the file
+        run: nim c -d:release src/xlsx_compare
