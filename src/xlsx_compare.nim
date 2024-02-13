@@ -146,7 +146,7 @@ proc compare(wbOriginal,wbNew: string) =
       var colu1 = getColumnAsText(sheet1, i)
       var colu2 = getColumnAsText(sheet2, j)
       var colName1 = (row:0,col:i).name[0..^2]
-      var colName2 = (row:0,col:j).name[0..^2]      
+      #var colName2 = (row:0,col:j).name[0..^2]      
       echo &"{colName1:^6}|{spaces(20)}|{colName1:^6}" # {repeat("", 25)}
       echo repeat("-",6),"|",repeat("=",20),"|",repeat("-",6)
       #echo ($i).c
