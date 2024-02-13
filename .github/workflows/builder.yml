@@ -1,51 +1,58 @@
-name: Builder
+name: Release Drafter
+
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
-on: [push]
+push:
+  # branches:
+  #   - master
+  tags:
+    - "v*.*.*"
+
 jobs:
+    tests:
+      runs-on: ${{ matrix.os }}
+      strategy:
+        matrix:
+          nimversion:
+            - binary:stable
+          os:
+            - ubuntu-latest
+            #- windows-latest
 
-  tests:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        nimversion:
-          - binary:stable
-        os:
-          - ubuntu-latest
-          #- windows-latest
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install Nim
-        uses: iffy/install-nim@v5
-        with:
-          nim-version: ${{ matrix.nimversion }}
-          repo-token: ${{ secrets.GITHUB_TOKEN }} 
+      steps:
+        - uses: actions/checkout@v4
+        - name: Install Nim
+          uses: iffy/install-nim@v5
+          with:
+            nim-version: ${{ matrix.nimversion }}
+            repo-token: ${{ secrets.GITHUB_TOKEN }} 
 
 
-      - name: Install the xlsx_compare package
-        run: nimble install -y
-      # - name: Compare the file
-      #   run: nim c -d:release src/xlsx_compare
+        - name: Install the xlsx_compare package
+          run: nimble install -y
+        # - name: Compare the file
+        #   run: nim c -d:release src/xlsx_compare
 
-      - name: zip it
-        run: zip -j xlsx_compare_linux.zip `readlink -f ~/.nimble/bin/xlsx_compare`
+        - name: zip it
+          run: zip -j xlsx_compare_linux.zip `readlink -f ~/.nimble/bin/xlsx_compare`
 
-      - name: Update nightly release
-        uses: eine/tip@master
-        with:
-          tag: snapshot
-          rm: true
-          token: ${{ secrets.GITHUB_TOKEN }}
-          files: xlsx_compare_linux.zip
+        - name: Upload binaries to release
+          uses: svenstaro/upload-release-action@v2
+          with:
+            repo_token: ${{ secrets.GITHUB_TOKEN }}
+            file: xlsx_compare_linux.zip
+            asset_name: xlsx_compare (linux)
+            tag: ${{ github.ref }}
+            overwrite: true
+            body: "This is my release text"
 
-      # - name: Deploy Windows release
-      #   if: matrix.os == 'windows-latest'
-      #   uses: WebFreak001/deploy-nightly@v3.1.0
-      #   with:
-      #     # https://api.github.com/repos/mantielero/xlsx_compare/releases
-      #     upload_url: https://uploads.github.com/repos/Pure-D/serve-d/releases/20717582/assets{?name,label} # find out this value by opening https://api.github.com/repos/<owner>/<repo>/releases in your browser and copy the full "upload_url" value including the {?name,label} part
-      #     release_id: 20717582 # same as above (id can just be taken out the upload_url, it's used to find old releases)
-      #     asset_path: ./myapp.zip # path to archive to upload
-      #     asset_name: myapp_windows-nightly-$$.zip # name to upload the release as, use $$ to insert date (YYYYMMDD) and 6 letter commit hash
-      #     asset_content_type: application/zip # required by GitHub API
-      #     max_releases: 7 # optional, if there are more releases than this matching the asset_name, the oldest ones are going to be deleted      
+        # - name: Deploy Windows release
+        #   if: matrix.os == 'windows-latest'
+        #   uses: WebFreak001/deploy-nightly@v3.1.0
+        #   with:
+        #     # https://api.github.com/repos/mantielero/xlsx_compare/releases
+        #     upload_url: https://uploads.github.com/repos/Pure-D/serve-d/releases/20717582/assets{?name,label} # find out this value by opening https://api.github.com/repos/<owner>/<repo>/releases in your browser and copy the full "upload_url" value including the {?name,label} part
+        #     release_id: 20717582 # same as above (id can just be taken out the upload_url, it's used to find old releases)
+        #     asset_path: ./myapp.zip # path to archive to upload
+        #     asset_name: myapp_windows-nightly-$$.zip # name to upload the release as, use $$ to insert date (YYYYMMDD) and 6 letter commit hash
+        #     asset_content_type: application/zip # required by GitHub API
+        #     max_releases: 7 # optional, if there are more releases than this matching the asset_name, the oldest ones are going to be deleted      
