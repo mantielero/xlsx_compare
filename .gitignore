@@ -3,3 +3,4 @@ nimblecache/
 htmldocs/
 examples/files/.~lock*
 src/xlsx_compare
+xlsx_compare
