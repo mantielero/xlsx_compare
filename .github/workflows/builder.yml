@@ -14,5 +14,12 @@ jobs:
           #- windows-latest
 
     steps:
+      - uses: actions/checkout@v4
+      - name: Install Nim
+        uses: iffy/install-nim@v5
+        with:
+          nim-version: ${{ matrix.nimversion }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }} 
+              
       - run: echo "Build tool"
       - run: nim c -d:release src/xlsx_compare
