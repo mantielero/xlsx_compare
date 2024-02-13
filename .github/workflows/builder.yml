@@ -26,3 +26,13 @@ jobs:
         run: nimble install -y
       - name: Compare the file
         run: nim c -d:release src/xlsx_compare
+
+      - name: zip it
+        run: zip -j xlsx_compare_linux.zip `readlink -f ~/.nimble/bin/xlsx_compare`
+      # - name: Update nightly release
+      #   uses: eine/tip@master
+      #   with:
+      #     tag: nightly
+      #     rm: true
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      #     files: xlsx_compare
