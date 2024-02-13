@@ -2,9 +2,17 @@ name: Builder
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
 on: [push]
 jobs:
-  Explore-GitHub-Actions:
-    runs-on: ubuntu-latest
+
+  tests:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        nimversion:
+          - binary:stable
+        os:
+          - ubuntu-latest
+          #- windows-latest
+
     steps:
       - run: echo "Build tool"
       - run: nim c -d:release src/xlsx_compare
-      
