@@ -41,6 +41,7 @@ jobs:
         - name: zip it
           if: matrix.os == 'windows-latest'
           run: |
+            Get-ChildItem -Path "~/.nimble/bin/xlsx_compare.cmd" | Format-Table
             $rutaReal = (Get-Item -Path (Resolve-Path -Path "~/.nimble/bin/xlsx_compare.cmd")).TargetPath
             Write-Output $rutaReal
             Compress-Archive -Path $rutaReal  -DestinationPath "xlsx_compare_win64.zip"
