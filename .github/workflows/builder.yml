@@ -40,7 +40,8 @@ jobs:
         
         - name: zip it
           if: matrix.os == 'windows-latest'
-          run: dir ~/.nimble/bin/
+          run: Compress-Archive -Path "~/.nimble/bin/xlsx_compare.cmd" -DestinationPath "xlsx_compare_win64.zip"
+          # dir ~/.nimble/bin/
           #zip -j xlsx_compare_linux64.zip `readlink -f ~/.nimble/bin/xlsx_compare`
           #run: Compress-Archive -Path folder/* -Destination new.zip
  
@@ -49,8 +50,9 @@ jobs:
           uses: svenstaro/upload-release-action@v2
           with:
             repo_token: ${{ secrets.GITHUB_TOKEN }}
-            file: ./xlsx_compare_linux64.zip
-            asset_name: xlsx_compare_$tag_linux64.zip
+            file: ./xlsx_compare_win64.zip
+            #asset_name: xlsx_compare_$tag_linux64.zip
+            asset_name: xlsx_compare_$tag_win64.zip
             tag: ${{ github.ref }}
             overwrite: true
             body: "Auto-released with Github actions"
