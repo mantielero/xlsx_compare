@@ -40,8 +40,8 @@ jobs:
         
         - name: prueba
           run: |
-            dir ~/.nimble/
-            dir ~/.nimble/ /s xlsx_compare.exe
+            cd ~/.nimble/pkgs2/
+            dir xlsx_compare.exe /s
 
         - name: zip it
           if: matrix.os == 'windows-latest'
