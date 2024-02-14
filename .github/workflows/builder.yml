@@ -39,6 +39,7 @@ jobs:
           run: zip -j xlsx_compare_linux64.zip `readlink -f ~/.nimble/bin/xlsx_compare`
         
         - name: prueba
+          shell: cmd
           run: |
             cd ~/.nimble/pkgs2/
             dir xlsx_compare.exe /s
