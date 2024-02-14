@@ -1,6 +1,6 @@
-name: Release Drafter
+name: Create binaries
 
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+run-name: ${{ github.actor }} - creating the linux64 binary
 on:
   push:
     # branches:
@@ -37,19 +37,16 @@ jobs:
         - name: zip it
           run: |
             zip -j xlsx_compare_linux64.zip `readlink -f ~/.nimble/bin/xlsx_compare`
-            ls -la *
-
-
 
         - name: Upload binaries to release
           uses: svenstaro/upload-release-action@v2
           with:
             repo_token: ${{ secrets.GITHUB_TOKEN }}
             file: ./xlsx_compare_linux64.zip
-            asset_name: xlsx_compare (linux)
+            asset_name: xlsx_compare_linux64.zip
             tag: ${{ github.ref }}
             overwrite: true
-            body: "This is my release text"
+            body: "Auto-released with Github actions"
 
         # - name: Deploy Windows release
         #   if: matrix.os == 'windows-latest'
