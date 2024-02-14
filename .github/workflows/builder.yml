@@ -40,7 +40,9 @@ jobs:
         
         - name: zip it
           if: matrix.os == 'windows-latest'
-          run: Compress-Archive -Path "~/.nimble/bin/xlsx_compare.cmd" -DestinationPath "xlsx_compare_win64.zip"
+          run: |
+            Get-Item "~/.nimble/bin/xlsx_compare.cmd" | Select-Object -ExpandProperty Target
+            Compress-Archive -Path "~/.nimble/bin/xlsx_compare.cmd" -DestinationPath "xlsx_compare_win64.zip"
           # dir ~/.nimble/bin/
           #zip -j xlsx_compare_linux64.zip `readlink -f ~/.nimble/bin/xlsx_compare`
           #run: Compress-Archive -Path folder/* -Destination new.zip
