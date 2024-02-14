@@ -38,21 +38,17 @@ jobs:
           if: matrix.os == 'ubuntu-latest'
           run: zip -j xlsx_compare_linux64.zip `readlink -f ~/.nimble/bin/xlsx_compare`
         
-        - name: prueba
-          shell: cmd
-          run: |
-            dir D:\a\xlsx_compare\xlsx_compare\xlsx_compare.exe
-            cd ~/.nimble/pkgs2/
-            dir xlsx_compare.exe /s
+        # - name: prueba
+        #   shell: cmd
+        #   run: |
+        #     dir D:\a\xlsx_compare\xlsx_compare\xlsx_compare.exe
+        #     cd ~/.nimble/pkgs2/
+        #     dir xlsx_compare.exe /s
 
         - name: zip it
           if: matrix.os == 'windows-latest'
           run: |
-            # Get-ChildItem -Path "~/.nimble/bin/xlsx_compare.cmd" | Format-Table
-            Get-ChildItem -Path "~/.nimble" -Filter "xlsx_compare.exe" | Write-Output
-            $rutaReal = (Get-Item -Path (Resolve-Path -Path "~/.nimble/bin/xlsx_compare.cmd")).TargetPath
-            Write-Output $rutaReal
-            Compress-Archive -Path $rutaReal  -DestinationPath "xlsx_compare_win64.zip"
+            Compress-Archive -Path "D:\a\xlsx_compare\xlsx_compare\xlsx_compare.exe"  -DestinationPath "xlsx_compare_win64.zip"
           #  Get-Item "~/.nimble/bin/xlsx_compare.cmd" | Select-Object -ExpandProperty Target
           # dir ~/.nimble/bin/
           #zip -j xlsx_compare_linux64.zip `readlink -f ~/.nimble/bin/xlsx_compare`
