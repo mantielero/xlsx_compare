@@ -20,7 +20,8 @@ jobs:
             #- windows-latest
 
       steps:
-        - uses: actions/checkout@v4
+        #- uses: actions/checkout@v4
+        - uses: actions/checkout@v3
         - name: Install Nim
           uses: iffy/install-nim@v5
           with:
@@ -34,13 +35,17 @@ jobs:
         #   run: nim c -d:release src/xlsx_compare
 
         - name: zip it
-          run: zip -j xlsx_compare_linux.zip `readlink -f ~/.nimble/bin/xlsx_compare`
+          run: |
+            zip -j xlsx_compare_linux64.zip `readlink -f ~/.nimble/bin/xlsx_compare`
+            ls -la *
+
+
 
         - name: Upload binaries to release
           uses: svenstaro/upload-release-action@v2
           with:
             repo_token: ${{ secrets.GITHUB_TOKEN }}
-            file: xlsx_compare_linux.zip
+            file: ./xlsx_compare_linux64.zip
             asset_name: xlsx_compare (linux)
             tag: ${{ github.ref }}
             overwrite: true
