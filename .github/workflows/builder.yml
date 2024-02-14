@@ -41,6 +41,7 @@ jobs:
         - name: prueba
           shell: cmd
           run: |
+            dir D:\a\xlsx_compare\xlsx_compare\xlsx_compare.exe
             cd ~/.nimble/pkgs2/
             dir xlsx_compare.exe /s
 
