@@ -1,15 +1,15 @@
 name: Create binaries
 
 run-name: Creating binaries
-on:
-  push:
-    tags:
-      - "v*.*.*"
+on: [push]
+  # push:
+  #   tags:
+  #     - "v*.*.*"
 
 jobs:
     publish:
       name: Publish for ${{ matrix.os }}
-      #runs-on: ${{ matrix.os }}
+      runs-on: ${{ matrix.os }}
       strategy:
         matrix:
           nimversion: [ binary:stable ]
@@ -62,7 +62,7 @@ jobs:
             file: ./xlsx_compare.zip
             #asset_name: xlsx_compare_$tag_linux64.zip
             asset_name: xlsx_compare-$tag-${{ matrix.osname }}.zip
-            tag: ${{ github.ref }}
+            tag: v0.1.0 ${{ github.ref }}
             overwrite: true
             #body: "Auto-released with Github actions"
 
