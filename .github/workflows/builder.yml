@@ -56,7 +56,7 @@ jobs:
             file: ./xlsx_compare.zip
             #asset_name: xlsx_compare_$tag_linux64.zip
             asset_name: xlsx_compare-$tag-${{ matrix.osname }}.zip
-            tag: v0.1.0 ${{ github.ref }}
+            tag: v0.1.0 # ${{ github.ref }}
             overwrite: true
             #body: "Auto-released with Github actions"
 
