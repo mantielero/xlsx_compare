@@ -7,14 +7,12 @@ on:
       - "v*.*.*"
 
 jobs:
-
     publish:
       name: Publish for ${{ matrix.os }}
-      runs-on: ${{ matrix.os }}
+      #runs-on: ${{ matrix.os }}
       strategy:
         matrix:
-          nimversion:
-            - binary:stable
+          nimversion: [ binary:stable ]
           include:
             - os: ubuntu-latest
               osname: linux64
