@@ -1,6 +1,7 @@
 # nim c -r xlsx_compare.nim -o ../examples/files/data.xlsx -m ../examples/files/data2.xlsx
+# nim c --os:windows --cc:clang --cpu:amd64 --clang.exe=zigcc --clang.linkerexe=zigcc --passC:"-target x86_64-windows -fno-sanitize=undefined" --passL:"-target x86_64-windows -fno-sanitize=undefined"   xlsx_compare.nim
+
 import xl
-import cligen
 import std/[strutils, tables, sequtils, strformat]
 import experimental/diff
 import system
