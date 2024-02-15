@@ -12,8 +12,8 @@ jobs:
       runs-on: ${{ matrix.os }}
       strategy:
         matrix:
-          nimversion: 
-            - binary:stable
+          #nimversion: 
+          #  - binary:stable
           include:
             - os: ubuntu-latest
               osname: linux64
@@ -26,7 +26,7 @@ jobs:
         - name: Install Nim
           uses: iffy/install-nim@v5
           with:
-            nim-version: ${{ matrix.nimversion }}
+            nim-version: binary:stable # ${{ matrix.nimversion }}
             repo-token: ${{ secrets.GITHUB_TOKEN }} 
 
 
@@ -38,13 +38,6 @@ jobs:
         - name: zip it
           if: matrix.os == 'ubuntu-latest'
           run: zip -j xlsx_compare.zip `readlink -f ~/.nimble/bin/xlsx_compare`
-        
-        # - name: prueba
-        #   shell: cmd
-        #   run: |
-        #     dir D:\a\xlsx_compare\xlsx_compare\xlsx_compare.exe
-        #     cd ~/.nimble/pkgs2/
-        #     dir xlsx_compare.exe /s
 
         - name: zip it
           if: matrix.os == 'windows-latest'
