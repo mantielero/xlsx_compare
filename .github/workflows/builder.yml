@@ -15,9 +15,11 @@ jobs:
         matrix:
           nimversion:
             - binary:stable
-          os:
-            - ubuntu-latest
-            - windows-latest
+          include:
+            - os: ubuntu-latest
+              osname: linux64
+            - os: windows-latest
+              osname: win64
 
       steps:
         #- uses: actions/checkout@v4
@@ -36,7 +38,7 @@ jobs:
 
         - name: zip it
           if: matrix.os == 'ubuntu-latest'
-          run: zip -j xlsx_compare_linux64.zip `readlink -f ~/.nimble/bin/xlsx_compare`
+          run: zip -j xlsx_compare.zip `readlink -f ~/.nimble/bin/xlsx_compare`
         
         # - name: prueba
         #   shell: cmd
@@ -48,7 +50,7 @@ jobs:
         - name: zip it
           if: matrix.os == 'windows-latest'
           run: |
-            Compress-Archive -Path "D:\a\xlsx_compare\xlsx_compare\xlsx_compare.exe"  -DestinationPath "xlsx_compare_win64.zip"
+            Compress-Archive -Path "D:\a\xlsx_compare\xlsx_compare\xlsx_compare.exe"  -DestinationPath "xlsx_compare.zip"
           #  Get-Item "~/.nimble/bin/xlsx_compare.cmd" | Select-Object -ExpandProperty Target
           # dir ~/.nimble/bin/
           #zip -j xlsx_compare_linux64.zip `readlink -f ~/.nimble/bin/xlsx_compare`
@@ -59,9 +61,9 @@ jobs:
           uses: svenstaro/upload-release-action@v2
           with:
             repo_token: ${{ secrets.GITHUB_TOKEN }}
-            file: ./xlsx_compare_win64.zip
+            file: ./xlsx_compare.zip
             #asset_name: xlsx_compare_$tag_linux64.zip
-            asset_name: xlsx_compare_$tag_win64.zip
+            asset_name: xlsx_compare-$tag-${{ matrix.osname }}.zip
             tag: ${{ github.ref }}
             overwrite: true
             body: "Auto-released with Github actions"
