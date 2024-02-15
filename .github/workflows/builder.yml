@@ -16,7 +16,7 @@ jobs:
           nimversion:
             - binary:stable
           os:
-            #- ubuntu-latest
+            - ubuntu-latest
             - windows-latest
 
       steps:
