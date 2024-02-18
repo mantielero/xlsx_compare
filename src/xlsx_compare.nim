@@ -1,6 +1,7 @@
 # nim c -r xlsx_compare.nim -o ../examples/files/data.xlsx -m ../examples/files/data2.xlsx
 # nim c --os:windows --cc:clang --cpu:amd64 --clang.exe=zigcc --clang.linkerexe=zigcc --passC:"-target x86_64-windows -fno-sanitize=undefined" --passL:"-target x86_64-windows -fno-sanitize=undefined"   xlsx_compare.nim
 
+# TODO: diferenciar hojas
 import xl
 import std/[strutils, tables, sequtils, strformat]
 import experimental/diff
@@ -107,17 +108,23 @@ proc compareColumns(col1,col2:tuple[txt:string; toRow:seq[int]]):string =
     result &= &"{nRow:: <20.20}|" & a[i] & "|\n" 
 
 
-proc compare(wbOriginal,wbNew: string) =
+proc compare(wbOriginal,wbModified: string) =
   var wb1 = xl.load(wbOriginal)
-  var wb2 = xl.load(wbNew)
+  var wb2 = xl.load(wbModified)
+
+  # 1. Contar las hojas
+
+  # 2. Trazar las hojas (descubriendo las que son completamente nuevas)
+
+  # 3. Dentro de cada hoja identificar si hay columnas de más
+
   for name in wb1.sheetNames:
-    echo "\n\nWorksheet: ", name
+    echo "\n\nSheet Name: ", name
 
     # Get columns
     var sheet1 = wb1.sheet(name)
     var sheet2 = wb2.sheet(name)    
     
-    #------
     # Lets find which column is closer to the original (just in case it was reorder)
     var columns1 = sheet1.getColumnsAsText()
     var columns2 = sheet2.getColumnsAsText()

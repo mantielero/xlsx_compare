@@ -38,3 +38,10 @@ where:
 - The numbers in the left column represent the row from where that line is coming from in the original file. The numbers in the right column represent the row from where that line is coming in the modified file.
 
 
+# Installation
+If you have nim installed, you can just do:
+```sh
+nimble install https://github.com/mantielero/xlsx_compare
+```
+
+If not, you can download the binaries (for linux or windows) from the [releases](https://github.com/mantielero/xlsx_compare/releases) page.
