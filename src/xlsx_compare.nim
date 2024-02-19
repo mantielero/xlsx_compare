@@ -3,7 +3,7 @@
 
 # TODO: diferenciar hojas
 import xl
-import std/[strutils, tables, sequtils, strformat]
+import std/[strutils, tables, sequtils, strformat, editdistance, algorithm]
 import experimental/diff
 import system
 
@@ -37,6 +37,18 @@ proc getColumnAsText(sheet:XlSheet;colNumber:int):tuple[txt:string,toRow:seq[int
     txt = txt[0..<txt.high]
   return (txt,mapping)
 
+proc myCmp(x, y: tuple[sheetName1:string, sheetName2:string, n:int]): int =
+  cmp(x.n, y.n)
+
+proc getSheetAsText(sheet:XlSheet):string =
+  result = ""
+  for r in 0..<sheet.range.rowCount:
+    #var row = sheet.row(r)
+    var txt = ""
+    for c in 0..<sheet.range.colCount:
+      #var cell = col.cell(r)
+      txt &= sheet.cell(r,c).value & "|" 
+    result &= txt & "\n"
 
 #[ proc compareColumns2(col1,col2:tuple[txt:string; toRow:seq[int]]):string =
   var txt0 = col1.txt
@@ -75,10 +87,7 @@ proc compareColumns(col1,col2:tuple[txt:string; toRow:seq[int]]):string =
   var a = col1.txt.splitLines()
   var b = col2.txt.splitLines()
   var orig = 0
-  #echo diffText(txt0, txt1)
-  #echo col1.toRow, " ",  col1.toRow.len, " ", a.len
-  #echo a
-  #echo "--"
+
   
   for k in diffText(txt0, txt1):
     var
@@ -113,17 +122,62 @@ proc compare(wbOriginal,wbModified: string) =
   var wb2 = xl.load(wbModified)
 
   # 1. Contar las hojas
+  var wb1SheetNames = wb1.sheetNames.toSeq
+  var wb2SheetNames = wb2.sheetNames.toSeq
 
-  # 2. Trazar las hojas (descubriendo las que son completamente nuevas)
+  var sheetNames:seq[tuple[sheetName1:string, sheetName2:string, n:int]]
+  var Nmax = 10000
+  for name1 in wb1.sheetNames:
+    var sheet1 = wb1.sheet(name1)
+    var sheet1Txt = sheet1.getSheetAsText
+    if sheet1Txt.len > Nmax:
+      sheet1Txt = sheet1Txt[0..<Nmax]
+    for name2 in wb2.sheetNames:
+      var sheet2 = wb2.sheet(name2)
+      var sheet2Txt = sheet2.getSheetAsText
+      if sheet2Txt.len > Nmax:
+        sheet2Txt = sheet2Txt[0..<Nmax]      
+
+      sheetNames &= (name1, name2, editdistance(sheet1Txt, sheet2Txt))
+
+  # Number of sheets that might have a match
+  var n = min(wb1SheetNames.len, wb2SheetNames.len)
+  sheetNames.sort(myCmp)
+
+  # Show new Sheets
+  if wb1SheetNames.len > wb2SheetNames.len:
+    echo "\n\nThe original spreadsheet contains more sheets than modified one:"
+    for tmp in sheetNames[n..sheetNames.high]:
+      echo &"- {tmp.sheetName1}"
+  elif wb2SheetNames.len > wb1SheetNames.len:
+    echo "\n\nThe modified spreadsheet contains more sheets than original one:"
+    for tmp in sheetNames[n..sheetNames.high]:
+      echo &"- {tmp.sheetName2}"    
+
+      
+
+  # This is how sheetNames are traced from one file to another.
+  #echo sheetNames[0..<n]
+
+  # if wb1SheetNames.len > wb2SheetNames.len:
+  #   echo &"[INFO] The original sheet has {wb1SheetNames.len - wb2SheetNames.len} sheets more than the modified one."
+
+  # else:
+  #   echo &"[INFO] The modifed sheet has {wb2SheetNames.len - wb1SheetNames.len} sheets more than the original one."
+
+  #echo wb1SheetNames
+  #echo wb2SheetNames  
+  
 
   # 3. Dentro de cada hoja identificar si hay columnas de más
 
-  for name in wb1.sheetNames:
-    echo "\n\nSheet Name: ", name
+  for tmp in sheetNames[0..<n]:#wb1.sheetNames:
+    echo "\n\nOriginal - Sheet Name: ", tmp.sheetName1
+    echo "Modified - Sheet Name: ", tmp.sheetName2
 
     # Get columns
-    var sheet1 = wb1.sheet(name)
-    var sheet2 = wb2.sheet(name)    
+    var sheet1 = wb1.sheet(tmp.sheetName1)
+    var sheet2 = wb2.sheet(tmp.sheetName2)    
     
     # Lets find which column is closer to the original (just in case it was reorder)
     var columns1 = sheet1.getColumnsAsText()
